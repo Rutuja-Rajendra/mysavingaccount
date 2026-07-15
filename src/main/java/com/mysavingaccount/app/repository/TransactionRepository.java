@@ -1,5 +1,14 @@
 package com.mysavingaccount.app.repository;
 
-public interface TransactionRepository {
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.mysavingaccount.app.entity.Transaction;
+
+@Repository
+public interface TransactionRepository extends JpaRepository<Transaction, Long>{
+
+	List<Transaction> findBySavingPlanId(Long savingPlanId);
 }
