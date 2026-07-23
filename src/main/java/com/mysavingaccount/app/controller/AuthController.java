@@ -33,9 +33,9 @@ public class AuthController {
 	
 	
 	@PostMapping("/login")
-	public User loginUser(@Valid @RequestBody LoginRequest loginRequest)
+	public String loginUserWithToken(@Valid @RequestBody LoginRequest loginRequest)
 	{
-		return authService.loginUser(
+		return authService.loginUserWithToken(
 				loginRequest.getEmail(),
 				loginRequest.getPassword());
 	}

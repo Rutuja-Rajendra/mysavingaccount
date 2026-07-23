@@ -2,13 +2,13 @@ package com.mysavingaccount.app.service;
 
 import java.time.LocalDateTime;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mysavingaccount.app.entity.User;
 import com.mysavingaccount.app.repository.UserRepository;
+import com.mysavingaccount.app.util.JwtUtil;
 
 @Service
 public class AuthService {
@@ -18,6 +18,9 @@ public class AuthService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	JwtUtil jwtUtil;
 	
 	
 	public User registerUser(String name, String email, String phone, String password)
@@ -58,6 +61,11 @@ public class AuthService {
 	    }
 
 	    return existingUser;
+	}
+
+	public String loginUserWithToken(String email, String password) {
+	    User user = loginUser(email, password);   // reuse existing validation
+	    return jwtUtil.generateToken(user.getEmail());
 	}
 	
 	
