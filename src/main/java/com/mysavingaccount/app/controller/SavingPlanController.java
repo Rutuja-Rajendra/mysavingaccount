@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mysavingaccount.app.entity.SavingPlan;
+import com.mysavingaccount.app.dto.SavingPlanResponse;
 import com.mysavingaccount.app.service.SavingPlanService;
 
 @RestController
@@ -18,9 +18,10 @@ public class SavingPlanController {
 	
 	@Autowired
 	private SavingPlanService savingPlanService;
+	
 
 	@PostMapping("/start")
-	public SavingPlan createSavingPlan(@RequestBody BigDecimal amount)
+	public SavingPlanResponse createSavingPlan(@RequestBody BigDecimal amount)
 	{
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();	
 		
