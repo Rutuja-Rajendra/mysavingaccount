@@ -79,4 +79,63 @@ public class SavingPlanService {
 		
 		return savingPlanResponse;
 	}
+	
+	public String modifySavingPlan(String email, BigDecimal amount)
+	{
+		
+		User user = userRepository.findByEmail(email);
+	    if (user == null) {
+	        throw new RuntimeException("User not found");
+	    }
+	    
+	    
+	    List<SavingPlan> savingPlans = savingPlanRepository.findByUserId(user.getId());
+	    
+	    SavingPlan activePlan = null;
+	    for (SavingPlan plan : savingPlans) {
+	        if (plan.getStatus().equals("ACTIVE")) {
+	            activePlan = plan;
+	            break;
+	        }
+	    }
+	    
+	    if (activePlan == null) {
+	        throw new RuntimeException("No active saving plan found to modify");
+	    }
+	    
+	    activePlan.setAmount(amount);
+	 // planChangeLog logic here later
+	    
+	    SavingPlan modifiedPlan =  savingPlanRepository.save(activePlan);
+	    return "Saving plan has modified successfully";
+	}
+	
+	public String stopSavingPlan(String email)
+	{
+		User user = userRepository.findByEmail(email);
+	    if (user == null) {
+	        throw new RuntimeException("User not found");
+	    }
+	    
+	    List<SavingPlan> savingPlans = savingPlanRepository.findByUserId(user.getId());
+
+	    SavingPlan activePlan = null;
+	    for (SavingPlan plan : savingPlans) {
+	        if (plan.getStatus().equals("ACTIVE")) {
+	            activePlan = plan;
+	            break;
+	        }
+	    }
+
+	    if (activePlan == null) {
+	        throw new RuntimeException("No active saving plan found to stop");
+	    }
+	    
+	    activePlan.setStatus("PAUSED");   
+	    savingPlanRepository.save(activePlan);
+
+	    return "Saving plan has been paused";
+	}
+	
+	
 }
