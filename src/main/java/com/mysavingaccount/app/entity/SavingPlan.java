@@ -32,6 +32,11 @@ public class SavingPlan {
 	private LocalDate nextDueDate;
 	private String mandateId;
 	private LocalDateTime createdAt;
+	
+	private String razorpayPlanId;
+	private String razorpaySubscriptionId;
+	private String razorpayShortUrl;
+	
 	public long getId() {
 		return id;
 	}
@@ -80,6 +85,25 @@ public class SavingPlan {
 	}
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+	
+	public String getRazorpayPlanId() {
+	    return razorpayPlanId;
+	}
+	public void setRazorpayPlanId(String razorpayPlanId) {
+	    this.razorpayPlanId = razorpayPlanId;
+	}
+	public String getRazorpaySubscriptionId() {
+	    return razorpaySubscriptionId;
+	}
+	public void setRazorpaySubscriptionId(String razorpaySubscriptionId) {
+	    this.razorpaySubscriptionId = razorpaySubscriptionId;
+	}
+	public String getRazorpayShortUrl() {
+	    return razorpayShortUrl;
+	}
+	public void setRazorpayShortUrl(String razorpayShortUrl) {
+	    this.razorpayShortUrl = razorpayShortUrl;
 	}
 
 }
