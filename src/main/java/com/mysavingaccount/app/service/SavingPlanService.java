@@ -13,6 +13,7 @@ import com.mysavingaccount.app.entity.SavingPlan;
 import com.mysavingaccount.app.entity.User;
 import com.mysavingaccount.app.repository.SavingPlanRepository;
 import com.mysavingaccount.app.repository.UserRepository;
+import com.razorpay.RazorpayException;
 
 @Service
 public class SavingPlanService {
@@ -24,6 +25,9 @@ public class SavingPlanService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private PaymentService paymentService;
+	
 	
 	public SavingPlanResponse createSavingPlan(String userEmail, BigDecimal amount)
 	{
@@ -33,6 +37,8 @@ public class SavingPlanService {
 	    }
 	    
 	    boolean hasActive = false;
+	    
+	      
 	    
 	    List<SavingPlan> savingPlans = savingPlanRepository.findByUserId(user.getId());
 	    
@@ -48,6 +54,13 @@ public class SavingPlanService {
 	    if (hasActive) {
 	        throw new RuntimeException("You already have an active saving plan. Modify it instead of creating a new one.");
 	    }
+	    	    
+	    SubscriptionHelper subscriptionResult;
+	    try {
+	        subscriptionResult = paymentService.createPlanAndSubscription(amount);
+	    } catch (RazorpayException e) {
+	        throw new RuntimeException("Failed to create Razorpay subscription: " + e.getMessage());
+	    }
 	    
 		SavingPlan savingPlan = new SavingPlan();
 		
@@ -56,9 +69,12 @@ public class SavingPlanService {
 		savingPlan.setUser(user);
 		savingPlan.setAmount(amount);
 		savingPlan.setFrequency("MONTHLY");
-		savingPlan.setStatus("ACTIVE");
+		savingPlan.setStatus("CREATED");
 		savingPlan.setNextDueDate(nextDueDate);
 		savingPlan.setCreatedAt(LocalDateTime.now());
+		savingPlan.setRazorpayPlanId(subscriptionResult.planId);
+		savingPlan.setRazorpaySubscriptionId(subscriptionResult.subscriptionId);
+		savingPlan.setRazorpayShortUrl(subscriptionResult.shortUrl);
 		
 		SavingPlan savedPlan =  savingPlanRepository.save(savingPlan);
 		
@@ -76,6 +92,8 @@ public class SavingPlanService {
 		savingPlanResponse.setNextDueDate(savingPlan.getNextDueDate());
 		savingPlanResponse.setMandateId(savingPlan.getMandateId());
 		savingPlanResponse.setCreatedAt(savingPlan.getCreatedAt());
+		savingPlanResponse.setRazorpaySubscriptionId(savingPlan.getRazorpaySubscriptionId());
+		savingPlanResponse.setRazorpayShortUrl(savingPlan.getRazorpayShortUrl());
 		
 		return savingPlanResponse;
 	}
@@ -129,6 +147,15 @@ public class SavingPlanService {
 
 	    if (activePlan == null) {
 	        throw new RuntimeException("No active saving plan found to stop");
+	    }
+	    
+	    
+	    if (activePlan.getRazorpaySubscriptionId() != null) {
+	        try {
+	        	paymentService.cancelSubscription(activePlan.getRazorpaySubscriptionId());
+	        } catch (RazorpayException e) {
+	        	throw new RuntimeException("Failed to cancel Razorpay subscription: " + e.getMessage());
+	        }
 	    }
 	    
 	    activePlan.setStatus("PAUSED");   

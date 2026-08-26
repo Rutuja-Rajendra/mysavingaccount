@@ -13,6 +13,10 @@ public class SavingPlanResponse {
 	private LocalDate nextDueDate;
 	private String mandateId;
 	private LocalDateTime createdAt;
+	
+	private String razorpaySubscriptionId;
+	private String razorpayShortUrl;
+	
 	public long getId() {
 		return id;
 	}
@@ -56,7 +60,18 @@ public class SavingPlanResponse {
 		this.createdAt = createdAt;
 	}
 	
-	
+	public String getRazorpaySubscriptionId() {
+	    return razorpaySubscriptionId;
+	}
+	public void setRazorpaySubscriptionId(String razorpaySubscriptionId) {
+	    this.razorpaySubscriptionId = razorpaySubscriptionId;
+	}
+	public String getRazorpayShortUrl() {
+	    return razorpayShortUrl;
+	}
+	public void setRazorpayShortUrl(String razorpayShortUrl) {
+	    this.razorpayShortUrl = razorpayShortUrl;
+	}
 	
 	
 }

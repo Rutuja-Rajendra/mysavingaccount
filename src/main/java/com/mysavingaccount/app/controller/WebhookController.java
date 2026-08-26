@@ -36,11 +36,10 @@ public class WebhookController {
 	
 	@PostMapping("/razorpay")
 	public ResponseEntity<String> handleRazorpayWebhook(
-			@RequestBody String payload,
-			@RequestHeader("X-Razorpay-Signature") String signature)
+	        @RequestBody String payload,
+	        @RequestHeader("X-Razorpay-Signature") String signature)
 	{
-		
-		try {
+	    try {
 	        boolean isValid = Utils.verifyWebhookSignature(payload, signature, webhookSecret);
 	        if (!isValid) {
 	            return ResponseEntity.status(400).body("Invalid signature");
@@ -48,39 +47,44 @@ public class WebhookController {
 	    } catch (RazorpayException e) {
 	        return ResponseEntity.status(400).body("Signature verification failed");
 	    }
-		
-		JSONObject event = new JSONObject(payload);
-		String eventType = event.getString("event");
-		System.out.println("Received event: " + eventType);
-		
-		String subscriptionId = event
-		        .getJSONObject("payload")
-		        .getJSONObject("subscription")
-		        .getJSONObject("entity")
-		        .getString("id");
-		
-		System.out.println("subscriptionId: " + subscriptionId);
 
-		String paymentID = event.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getString("id");
-		long amountInPaise = event.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getLong("amount");
-		
-		SavingPlan plan = savingPlanRepository.findByRazorpaySubscriptionId(subscriptionId);
-		
-		if (plan == null) {
-		    return ResponseEntity.ok("Plan not found, ignoring");
-		}
-		else
-		{
-			BigDecimal amount = BigDecimal.valueOf(amountInPaise).divide(BigDecimal.valueOf(100));
-			transactionService.recordTransaction(plan, amount, "SUCCESS", paymentID);
+	    JSONObject event = new JSONObject(payload);
+	    String eventType = event.getString("event");
+	    System.out.println("Received event: " + eventType);
 
-			plan.setStatus("ACTIVE");
-			savingPlanRepository.save(plan);
+	    String subscriptionId = event
+	            .getJSONObject("payload")
+	            .getJSONObject("subscription")
+	            .getJSONObject("entity")
+	            .getString("id");
 
-			return ResponseEntity.ok("ok");
-		}
-		
-		
+	    System.out.println("subscriptionId: " + subscriptionId);
 
+	    SavingPlan plan = savingPlanRepository.findByRazorpaySubscriptionId(subscriptionId);
+
+	    if (plan == null) {
+	        return ResponseEntity.ok("Plan not found, ignoring");
+	    }
+
+	    if (eventType.equals("subscription.authenticated")) {
+	        plan.setStatus("AUTHENTICATED");
+	        savingPlanRepository.save(plan);
+	    }
+	    else if (eventType.equals("subscription.activated")) {
+	        plan.setStatus("ACTIVE");
+	        savingPlanRepository.save(plan);
+	    }
+	    else if (eventType.equals("subscription.charged")) {
+	        String paymentID = event.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getString("id");
+	        long amountInPaise = event.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getLong("amount");
+
+	        BigDecimal amount = BigDecimal.valueOf(amountInPaise).divide(BigDecimal.valueOf(100));
+	        transactionService.recordTransaction(plan, amount, "SUCCESS", paymentID);
+
+	        plan.setStatus("ACTIVE");
+	        savingPlanRepository.save(plan);
+	    }
+
+	    return ResponseEntity.ok("ok");
 	}
 }

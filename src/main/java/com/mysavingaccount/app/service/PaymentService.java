@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mysavingaccount.app.entity.SavingPlan;
 import com.razorpay.Plan;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -56,6 +57,14 @@ public class PaymentService{
 		result.shortUrl = subscription.get("short_url");
 		return result;
 	
+	}
+	
+	public void cancelSubscription(String subscriptionId) throws RazorpayException {
+	    
+		JSONObject cancelRequest = new JSONObject();
+		cancelRequest.put("cancel_at_cycle_end", false);
+		
+		razorpayClient.subscriptions.cancel(subscriptionId, cancelRequest);
 	}
 }
 
