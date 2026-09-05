@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Start Saving Plan</title>
+</head>
+<body>
+
+<div th:if="${shortUrl == null}">
+    <h2>Start a New Saving Plan</h2>
+    <form th:action="@{/start-saving}" method="post">
+        <label>Monthly Amount (₹):</label>
+        <input type="number" name="amount" step="0.01" required />
+        <button type="submit">Start</button>
+    </form>
+</div>
+
+<div th:if="${shortUrl != null}">
+    <h3>Plan created! Complete your authorization:</h3>
+    <a th:href="${shortUrl}" target="_blank">Authorize Payment</a>
+</div>
+
+</body>
+</html>

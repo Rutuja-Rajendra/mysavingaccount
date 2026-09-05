@@ -28,6 +28,29 @@ public class SavingPlanService {
 	@Autowired
 	private PaymentService paymentService;
 	
+	public SavingPlan getActivePlan(String userEmail)
+	{
+		User user = userRepository.findByEmail(userEmail);
+	    if (user == null) {
+	        throw new RuntimeException("User not found");
+	    }
+	     
+	    
+	    List<SavingPlan> savingPlans = savingPlanRepository.findByUserId(user.getId());
+	    
+	    for(SavingPlan plan : savingPlans)
+	    {
+	    	if(plan.getStatus().equals("ACTIVE"))
+	    	{
+	    		return plan;
+
+	    	}
+	    }
+	    
+	       throw new RuntimeException("Sorry you don't have any active plan. Create a new one.");
+	    
+	    
+	}
 	
 	public SavingPlanResponse createSavingPlan(String userEmail, BigDecimal amount)
 	{

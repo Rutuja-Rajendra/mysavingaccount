@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard - MySavingAccount</title>
+</head>
+<body>
+
+<h2>Welcome, <span th:text="${name}"></span></h2>
+
+<div th:if="${plan != null}">
+    <h3>Your Saving Plan</h3>
+    <p>Amount: ₹<span th:text="${plan.amount}"></span></p>
+    <p>Status: <span th:text="${plan.status}"></span></p>
+    <p>Next Due Date: <span th:text="${plan.nextDueDate}"></span></p>
+</div>
+
+<div th:if="${plan == null}">
+    <p>You don't have an active saving plan yet.</p>
+    <a href="/start-saving">Start a new plan</a>
+</div>
+
+</body>
+</html>
