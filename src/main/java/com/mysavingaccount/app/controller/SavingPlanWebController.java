@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mysavingaccount.app.dto.SavingPlanResponse;
@@ -33,4 +34,21 @@ public class SavingPlanWebController {
         model.addAttribute("shortUrl", response.getRazorpayShortUrl());
         return "start-saving";
     }
+    
+    @PostMapping("/modify-saving")
+    public String modifySavingPlan(@RequestParam BigDecimal amount)
+    {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        savingPlanService.modifySavingPlan(email, amount);
+        
+        return "redirect:/dashboard";    }
+    
+    @PostMapping("/stop-saving")
+    public String stopSavingPlan()
+    {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        savingPlanService.stopSavingPlan(email);
+        return "redirect:/dashboard";    }
 }

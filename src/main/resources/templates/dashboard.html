@@ -2,21 +2,53 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dashboard - MySavingAccount</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
-<h2>Welcome, <span th:text="${name}"></span></h2>
+<div class="container wide">
 
-<div th:if="${plan != null}">
-    <h3>Your Saving Plan</h3>
-    <p>Amount: ₹<span th:text="${plan.amount}"></span></p>
-    <p>Status: <span th:text="${plan.status}"></span></p>
-    <p>Next Due Date: <span th:text="${plan.nextDueDate}"></span></p>
-</div>
+    <div class="logout-row">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 
-<div th:if="${plan == null}">
-    <p>You don't have an active saving plan yet.</p>
-    <a href="/start-saving">Start a new plan</a>
+    <h2>Welcome, <span th:text="${name}"></span></h2>
+
+    <div th:if="${plan != null}">
+        <div class="plan-card">
+            <p><strong>Amount:</strong> ₹<span th:text="${plan.amount}"></span> / month</p>
+            <p>
+                <strong>Status:</strong>
+                <span class="status-badge"
+                      th:classappend="${'status-' + #strings.toLowerCase(plan.status)}"
+                      th:text="${plan.status}"></span>
+            </p>
+            <p><strong>Next Due Date:</strong> <span th:text="${plan.nextDueDate}"></span></p>
+        </div>
+
+        <div class="form-row">
+            <form th:action="@{/modify-saving}" method="post">
+                <div class="form-group">
+                    <label>New Amount (₹)</label>
+                    <input type="number" name="amount" step="0.01" required />
+                </div>
+                <button type="submit">Modify Plan</button>
+            </form>
+
+            <form th:action="@{/stop-saving}" method="post">
+                <label>&nbsp;</label>
+                <button type="submit" class="danger">Stop Plan</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${plan == null}">
+        <p style="margin-bottom: 16px; color: #666;">You don't have an active saving plan yet.</p>
+        <a href="/start-saving"><button type="button">Start a New Plan</button></a>
+    </div>
+
 </div>
 
 </body>

@@ -2,21 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Start Saving Plan</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 
-<div th:if="${shortUrl == null}">
-    <h2>Start a New Saving Plan</h2>
-    <form th:action="@{/start-saving}" method="post">
-        <label>Monthly Amount (₹):</label>
-        <input type="number" name="amount" step="0.01" required />
-        <button type="submit">Start</button>
-    </form>
-</div>
+<div class="container">
 
-<div th:if="${shortUrl != null}">
-    <h3>Plan created! Complete your authorization:</h3>
-    <a th:href="${shortUrl}" target="_blank">Authorize Payment</a>
+    <div th:if="${shortUrl == null}">
+        <h2>Start a New Saving Plan</h2>
+        <form th:action="@{/start-saving}" method="post">
+            <div class="form-group">
+                <label>Monthly Amount (₹)</label>
+                <input type="number" name="amount" step="0.01" required />
+            </div>
+            <button type="submit">Start</button>
+        </form>
+    </div>
+
+    <div th:if="${shortUrl != null}">
+        <h3>Plan created! 🎉</h3>
+        <p style="margin-bottom: 16px; color: #666;">Complete your authorization to activate it.</p>
+        <a th:href="${shortUrl}" target="_blank"><button type="button">Authorize Payment</button></a>
+    </div>
+
+    <div class="link-row">
+        <a href="/dashboard">Back to Dashboard</a>
+    </div>
 </div>
 
 </body>

@@ -18,6 +18,8 @@ import com.razorpay.RazorpayException;
 @Service
 public class SavingPlanService {
 
+	@Autowired
+	private NotificationService notificationService;
 	
 	@Autowired
 	private SavingPlanRepository savingPlanRepository;
@@ -100,7 +102,7 @@ public class SavingPlanService {
 		savingPlan.setRazorpayShortUrl(subscriptionResult.shortUrl);
 		
 		SavingPlan savedPlan =  savingPlanRepository.save(savingPlan);
-		
+		notificationService.sendPlanCreatedEmail(user.getEmail(), user.getName(), amount);
 		return mapToResponse(savedPlan);
 	}
 	
@@ -148,6 +150,7 @@ public class SavingPlanService {
 	 // planChangeLog logic here later
 	    
 	    SavingPlan modifiedPlan =  savingPlanRepository.save(activePlan);
+	    notificationService.sendPlanModifiedEmail(user.getEmail(), user.getName(), amount);
 	    return "Saving plan has modified successfully";
 	}
 	
@@ -183,7 +186,7 @@ public class SavingPlanService {
 	    
 	    activePlan.setStatus("PAUSED");   
 	    savingPlanRepository.save(activePlan);
-
+	    notificationService.sendPlanStoppedEmail(user.getEmail(), user.getName());
 	    return "Saving plan has been paused";
 	}
 	

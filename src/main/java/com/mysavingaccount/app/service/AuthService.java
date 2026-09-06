@@ -12,6 +12,9 @@ import com.mysavingaccount.app.util.JwtUtil;
 
 @Service
 public class AuthService {
+	
+	@Autowired
+	private NotificationService notificationService;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -39,8 +42,11 @@ public class AuthService {
 		user.setPassword(passwordEncoder.encode(password));
 		user.setCreatedAt(LocalDateTime.now());
 		
-		
-		return userRepository.save(user);
+		User savedUser = userRepository.save(user);
+	    
+	    notificationService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getName());
+	    
+	    return savedUser;
 		
 		
 	}
