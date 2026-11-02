@@ -120,4 +120,4 @@ Razorpay's Test Mode sandbox checkout occasionally returns a generic server erro
 Due-date reminder emails and post-payment confirmation emails are planned but not yet implemented, pending more reliable end-to-end testing of the full billing cycle.
 
 Author
-Rutuja Bandle GitHub · rutub175@gmail.com
+Rutuja Bandle GitHub · https://github.com/Rutuja-Rajendra
