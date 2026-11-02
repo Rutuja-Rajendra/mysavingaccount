@@ -28,21 +28,35 @@
             <p><strong>Next Due Date:</strong> <span th:text="${plan.nextDueDate}"></span></p>
         </div>
 
-        <div class="form-row">
-            <form th:action="@{/modify-saving}" method="post">
-                <div class="form-group">
-                    <label>New Amount (₹)</label>
-                    <input type="number" name="amount" step="0.01" required />
-                </div>
-                <button type="submit">Modify Plan</button>
-            </form>
+		<div class="form-row">
 
-            <form th:action="@{/stop-saving}" method="post">
-                <label>&nbsp;</label>
-                <button type="submit" class="danger">Stop Plan</button>
-            </form>
-        </div>
+		    <form th:action="@{/modify-saving}" method="post" class="plan-action-form">
+		        <div class="form-group">
+		            <label>New Amount (₹)</label>
+		            <input type="number" name="amount" step="0.01" required />
+		        </div>
+
+		        <button type="submit">Modify Plan</button>
+		    </form>
+
+		    <form th:action="@{/stop-saving}" method="post" class="plan-action-form stop-form">
+		        <div class="form-group">
+		            <label>&nbsp;</label>
+		        </div>
+
+		        <button type="submit" class="danger">Stop Plan</button>
+		    </form>
+
+		</div>
     </div>
+	
+	<div th:if="${plan != null and plan.status != 'ACTIVE'}">
+	    <div class="plan-card">
+	        <p><strong>Amount:</strong> ₹<span th:text="${plan.amount}"></span> / month</p>
+	        <p><strong>Status:</strong> <span class="status-badge status-created">Awaiting authorization</span></p>
+	    </div>
+	    <a th:href="${plan.razorpayShortUrl}" target="_blank"><button type="button">Complete Authorization</button></a>
+	</div>
 
     <div th:if="${plan == null}">
         <p style="margin-bottom: 16px; color: #666;">You don't have an active saving plan yet.</p>

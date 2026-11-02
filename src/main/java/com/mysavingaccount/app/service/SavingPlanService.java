@@ -40,13 +40,17 @@ public class SavingPlanService {
 	    
 	    List<SavingPlan> savingPlans = savingPlanRepository.findByUserId(user.getId());
 	    
-	    for(SavingPlan plan : savingPlans)
-	    {
-	    	if(plan.getStatus().equals("ACTIVE"))
-	    	{
-	    		return plan;
-
-	    	}
+	    SavingPlan pendingPlan = null;
+	    for (SavingPlan plan : savingPlans) {
+	        if (plan.getStatus().equals("ACTIVE")) {
+	            return plan;
+	        }
+	        if (plan.getStatus().equals("CREATED") || plan.getStatus().equals("AUTHENTICATED")) {
+	            pendingPlan = plan;
+	        }
+	    }
+	    if (pendingPlan != null) {
+	        return pendingPlan;
 	    }
 	    
 	       throw new RuntimeException("Sorry you don't have any active plan. Create a new one.");
@@ -69,10 +73,11 @@ public class SavingPlanService {
 	    
 	    for(SavingPlan plan : savingPlans)
 	    {
-	    	if(plan.getStatus().equals("ACTIVE"))
-	    	{
-	    		hasActive = true;
-	    		break;
+	    	if (plan.getStatus().equals("ACTIVE")
+	    	        || plan.getStatus().equals("CREATED")
+	    	        || plan.getStatus().equals("AUTHENTICATED")) {
+	    	    hasActive = true;
+	    	    break;
 	    	}
 	    }
 	    

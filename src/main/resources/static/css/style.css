@@ -152,11 +152,37 @@ button.danger:hover {
 
 .form-row {
     display: flex;
-    gap: 12px;
+    align-items: flex-end;
+    gap: 15px;
+    width: 100%;
 }
 
-.form-row form {
+.plan-action-form {
     flex: 1;
+    min-width: 0;
+}
+
+.plan-action-form .form-group {
+    margin-bottom: 10px;
+}
+
+.plan-action-form input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.plan-action-form button {
+    width: 100%;
+}
+
+.stop-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.stop-form .form-group {
+    visibility: hidden;
 }
 
 .logout-row {
